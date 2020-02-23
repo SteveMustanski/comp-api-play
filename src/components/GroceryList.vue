@@ -1,9 +1,9 @@
 <template>
   <div>
-    <input type="text" v-model="input" placeholder="Add Grocery" />
+    <input type="text" v-model="state.input" placeholder="Add Grocery" />
     <input type="submit" @click="addGrocery()" />
     <ul>
-      <li v-for="(item, index) in groceries" :key="item">
+      <li v-for="(item, index) in state.groceries" :key="item">
         {{ item }}
         <button @click="deleteGrocery(index)">X</button>
       </li>
@@ -12,27 +12,36 @@
 </template>
 
 <script>
+  import { reactive } from "@vue/composition-api";
+
   export default {
-    data() {
-      return {
+
+    setup() {
+      const { state, addGrocery, deleteGrocery } = useGroceryList();
+      return { state, addGrocery, deleteGrocery };
+    }
+  };
+
+  function useGroceryList() {
+    let state = reactive({
         input: "",
         groceries: []
-      }
-    },
-    methods: {
-      addGrocery() {
-        this.groceries.push(this.input);
-        this.input = "";
-      },
-      deleteGrocery(index) {
-        this.groceries.splice(index, 1);
-      }
-    },
+    });
+    function addGrocery() {
+      state.groceries.push(state.input);
+      state.input = "";
+    }
+    function deleteGrocery(index) {
+      state.groceries.splice(index, 1);
+    }
+    return { state, addGrocery, deleteGrocery }
   }
+
+
 </script>
 
 <style lang="css" scoped>
-  ul {
-    list-style-type: none;
-  }
+ul {
+  list-style-type: none;
+}
 </style>
